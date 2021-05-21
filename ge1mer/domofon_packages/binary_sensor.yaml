@@ -31,6 +31,7 @@ binary_sensor:
       # Short click - open door or enable once auto opening
       - timing:
         - ON for $short_click_time_from to $short_click_time_to
+        - OFF for at least 0.5s
         then:
           if:
             condition:
@@ -52,6 +53,19 @@ binary_sensor:
                   id(mode_auto_open_once) = true;
                   id(mode_auto_reject) = false;
                 }
+      # Double click - on/off mute
+      - timing:
+        - ON for $short_click_time_from to $short_click_time_to
+        - OFF for $short_click_time_from to $short_click_time_to
+        - ON for $short_click_time_from to $short_click_time_to
+        - OFF for at least 0.2s
+        then:
+          lambda: |-
+            if (id(mode_mute)) {
+              id(mode_mute) = false;
+            } else {
+              id(mode_mute) = true;
+            }
       # Long click - disable auto opening
       - timing:
         - ON for at least $short_click_time_to
